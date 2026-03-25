@@ -43,6 +43,11 @@ body{
   background: linear-gradient(135deg, var(--primary) 0%, var(--primary2) 100%);
 }
 
+/* 하단 고정 네비가 콘텐츠를 가리지 않도록 */
+main{
+  padding-bottom: calc(7rem + env(safe-area-inset-bottom, 0px));
+}
+
 @media (prefers-reduced-motion: reduce){
   *{ animation: none !important; transition: none !important; scroll-behavior: auto !important; }
 }
