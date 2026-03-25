@@ -9,7 +9,6 @@
   const phaseLabel = document.getElementById('phaseLabel');
   const modeIcon = document.getElementById('modeIcon');
   const timerText = document.getElementById('timerText');
-  const progressFill = document.getElementById('progressFill');
   const ringCircle = document.getElementById('timerRing');
 
   const btnReset = document.getElementById('btnReset');
@@ -45,39 +44,35 @@
 
   function applyModeUI() {
     const isFocus = mode === 'focus';
-    modeBadgeText.textContent = isFocus ? '집중' : '휴식';
+    modeBadgeText.textContent = isFocus ? 'CURRENT FOCUS' : 'SHORT BREAK';
     phaseLabel.textContent = isFocus ? 'Session 1/2' : 'Session 2/2';
     modeIcon.textContent = isFocus ? 'local_fire_department' : 'self_improvement';
   }
 
-  function setProgressUI() {
+  function updateProgressRing() {
     const total = modeDurations[mode];
     const elapsed = total - remainingSeconds;
     const progress = total > 0 ? Math.min(1, Math.max(0, elapsed / total)) : 0;
 
-    // Progress bar
-    const pct = Math.round(progress * 1000) / 10; // one decimal
-    progressFill.style.width = `${pct}%`;
-
     // Progress ring
     // At progress=0 => dashoffset=circumference, progress=1 => dashoffset=0
     const dashOffset = RING_CIRCUMFERENCE * (1 - progress);
-    ringCircle.style.strokeDashoffset = String(dashOffset);
+    ringCircle.setAttribute('stroke-dashoffset', String(dashOffset));
   }
 
   function updateButtons() {
     if (running) {
-      btnStartPause.textContent = '일시정지';
+      btnStartPause.textContent = 'Pause';
       btnStartPause.setAttribute('aria-pressed', 'true');
     } else {
-      btnStartPause.textContent = mode === 'focus' ? '시작' : '휴식 시작';
+      btnStartPause.textContent = mode === 'focus' ? 'Start Focus' : 'Start Break';
       btnStartPause.setAttribute('aria-pressed', 'false');
     }
   }
 
   function updateUI() {
     timerText.textContent = formatTime(remainingSeconds);
-    setProgressUI();
+    updateProgressRing();
     applyModeUI();
     updateButtons();
   }
@@ -251,5 +246,47 @@
   }
 
   updateUI();
+
+  // ---- Screen Navigation (Timer / Tasks / Stats / Settings) ----
+  const SCREEN_STORAGE_KEY = 'big_pomodoro_screen_v1';
+  const screens = [
+    { key: 'timer', el: document.getElementById('screen-timer') },
+    { key: 'tasks', el: document.getElementById('screen-tasks') },
+    { key: 'stats', el: document.getElementById('screen-stats') },
+    { key: 'settings', el: document.getElementById('screen-settings') }
+  ];
+
+  const navItems = Array.from(document.querySelectorAll('[data-screen]'));
+
+  function setActiveScreen(nextKey) {
+    screens.forEach(({ key, el }) => {
+      if (!el) return;
+      const isActive = key === nextKey;
+      el.classList.toggle('hidden', !isActive);
+    });
+
+    navItems.forEach((a) => {
+      const key = a.getAttribute('data-screen');
+      const isActive = key === nextKey;
+      a.classList.toggle('navItemActive', isActive);
+      if (isActive) a.setAttribute('aria-current', 'page');
+      else a.removeAttribute('aria-current');
+    });
+
+    localStorage.setItem(SCREEN_STORAGE_KEY, nextKey);
+  }
+
+  navItems.forEach((a) => {
+    a.addEventListener('click', (e) => {
+      e.preventDefault();
+      const nextKey = a.getAttribute('data-screen');
+      if (!nextKey) return;
+      setActiveScreen(nextKey);
+    });
+  });
+
+  const savedScreen = localStorage.getItem(SCREEN_STORAGE_KEY);
+  const hasSaved = screens.some((s) => s.key === savedScreen);
+  setActiveScreen(hasSaved ? savedScreen : 'timer');
 })();
 

@@ -43,6 +43,52 @@ body{
   background: linear-gradient(135deg, var(--primary) 0%, var(--primary2) 100%);
 }
 
+/* Stitch canvas background */
+.obsidian-gradient{
+  background: radial-gradient(circle at 50% 0%, rgba(255, 143, 121, 0.05) 0%, rgba(13, 14, 16, 1) 70%);
+}
+
+/* Progress ring glow */
+.timer-glow{
+  filter: drop-shadow(0 0 25px rgba(255, 143, 121, 0.15));
+}
+
+/* Ghost border used in some stitched cards */
+.ghost-border{
+  border: 1px solid rgba(71, 72, 74, 0.15);
+}
+
+/* Tabs: Bottom navigation active state (JS toggles .navItemActive) */
+.navItemActive{
+  color: #ff8f79 !important;
+  background: rgba(255, 119, 94, 0.10) !important;
+  border-radius: 0.75rem !important;
+  box-shadow: 0 0 20px rgba(255, 119, 94, 0.2) !important;
+}
+
+input[type="range"]{
+  -webkit-appearance:none;
+  appearance:none;
+  background: transparent;
+  cursor:pointer;
+}
+
+input[type="range"]::-webkit-slider-runnable-track{
+  background: rgba(255, 255, 255, 0.05);
+  height: 8px;
+  border-radius: 9999px;
+}
+
+input[type="range"]::-webkit-slider-thumb{
+  -webkit-appearance:none;
+  height: 24px;
+  width: 24px;
+  border-radius: 50%;
+  background: #ff8f79;
+  margin-top: -8px;
+  box-shadow: 0 0 15px rgba(255, 143, 121, 0.4);
+}
+
 /* 하단 고정 네비가 콘텐츠를 가리지 않도록 */
 main{
   padding-bottom: calc(7rem + env(safe-area-inset-bottom, 0px));
